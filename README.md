@@ -49,3 +49,17 @@ tests/
 This project intentionally contains a few small issues to practice identifying and fixing problems in Git branches.
 
 See `ISSUES.md` for the full issue backlog with levels and acceptance criteria.
+
+## Create GitHub issues from script
+
+After pushing this repo and logging in with GitHub CLI:
+
+```bash
+./scripts/create-github-issues.sh
+```
+
+Resume from a specific issue number:
+
+```bash
+./scripts/create-github-issues.sh --start-from 6
+```
