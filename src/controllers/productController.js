@@ -12,7 +12,22 @@ const getProducts = async (req, res) => {
         ...getFullTextSearch(name, true, "name"),
       }
     }
-    const products = await Product.find(filter).sort("-createdAt");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({
+        message: 'Page and limit must be positive numbers',
+      });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const total = await Product.countDocuments();
+    const products = await Product.find(filter)
+    .skip(skip)
+    .limit(limit)
+    .sort("-createdAt");
     res.status(200).json(products)
   } catch (error) {
     res.status(500).json({ message: 'Could not fetch products' });
