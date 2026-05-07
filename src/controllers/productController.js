@@ -1,17 +1,21 @@
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 
 const getProducts = async (req, res) => {
   try {
-    // Intentionally not implementing name filter for teaching purposes.
     const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: 'Could not fetch products', error: error.message });
+    res.status(500).json({ message: 'Could not fetch products' });
   }
 };
 
 const getProductById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -20,7 +24,7 @@ const getProductById = async (req, res) => {
 
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: 'Could not fetch product', error: error.message });
+    res.status(500).json({ message: 'Could not fetch product' });
   }
 };
 
@@ -34,12 +38,19 @@ const createProduct = async (req, res) => {
     const newProduct = await Product.create(req.body);
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(400).json({ message: 'Could not create product', error: error.message });
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Invalid product data' });
+    }
+    res.status(500).json({ message: 'Could not create product' });
   }
 };
 
 const updateProduct = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -51,12 +62,19 @@ const updateProduct = async (req, res) => {
 
     res.status(200).json(updatedProduct);
   } catch (error) {
-    res.status(400).json({ message: 'Could not update product', error: error.message });
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Invalid product data' });
+    }
+    res.status(500).json({ message: 'Could not update product' });
   }
 };
 
 const deleteProduct = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
     if (!deletedProduct) {
@@ -65,7 +83,7 @@ const deleteProduct = async (req, res) => {
 
     res.status(200).json({ message: 'Product deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Could not delete product', error: error.message });
+    res.status(500).json({ message: 'Could not delete product' });
   }
 };
 
