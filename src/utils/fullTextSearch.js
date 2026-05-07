@@ -3,18 +3,18 @@ function getFullTextSearch(query, useRegex = false, regexField = null) {
     return {
       [regexField]: {
         $regex: query,
-        $options: "i",
-      },
+        $options: 'i'
+      }
     }
   }
 
   return {
     $text: {
-      $search: query,
-    },
+      $search: query
+    }
   }
 }
 
 module.exports = {
-  getFullTextSearch,
+  getFullTextSearch
 }
