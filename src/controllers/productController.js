@@ -12,7 +12,7 @@ const getProducts = async (req, res) => {
         ...getFullTextSearch(name, true, "name"),
       }
     }
-    const products = await Product.find(filter)
+    const products = await Product.find(filter).sort("-createdAt");
     res.status(200).json(products)
   } catch (error) {
     res.status(500).json({ message: 'Could not fetch products' });
