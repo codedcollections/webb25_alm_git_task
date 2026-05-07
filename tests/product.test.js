@@ -23,4 +23,11 @@ describe('Product model validation', () => {
     // This is intentionally incorrect because no min price validation is defined.
     expect(error).toBeDefined();
   });
+
+  it('creates a valid product with name, price and category', () => {
+    const product = new Product({ name: 'Keyboard', price: 499, description: 'Mechanical keyboard', category: 'electronics' });
+    const error = product.validateSync();
+
+    expect(error).toBeUndefined();
+  });
 });
