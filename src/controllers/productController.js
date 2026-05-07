@@ -2,11 +2,34 @@ const Product = require('../models/Product');
 
 const getProducts = async (req, res) => {
   try {
-    // Intentionally not implementing name filter for teaching purposes.
-    const products = await Product.find();
-    res.status(200).json(products);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({
+        message: 'Page and limit must be positive numbers',
+      });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const total = await Product.countDocuments();
+
+    const products = await Product.find()
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      page,
+      limit,
+      total,
+      products,
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Could not fetch products', error: error.message });
+    res.status(500).json({
+      message: 'Could not fetch products',
+      error: error.message,
+    });
   }
 };
 
