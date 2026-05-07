@@ -26,6 +26,11 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
+        const { name, price, description } = req.body;
+
+    if (!name || !price) {
+      return res.status(400).json({ message: 'Name and price are required' });
+    }
     const newProduct = await Product.create(req.body);
     res.status(201).json(newProduct);
   } catch (error) {
